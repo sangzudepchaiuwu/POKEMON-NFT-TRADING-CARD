@@ -1,0 +1,1127 @@
+/* Full-screen pack opening overlay */
+.pack-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(8, 6, 24, 0.88);
+  backdrop-filter: blur(6px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.35s ease, visibility 0.35s ease;
+}
+
+.pack-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.pack-overlay-content {
+  width: min(960px, 94vw);
+  text-align: center;
+  color: #fff;
+}
+
+.pack-scene {
+  display: none;
+}
+
+.pack-scene.active {
+  display: block;
+}
+
+.pack-glow {
+  position: absolute;
+  width: 280px;
+  height: 280px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 215, 0, 0.45) 0%, transparent 70%);
+  filter: blur(20px);
+  animation: glowPulse 2s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.pack-img-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 24px;
+}
+
+.pack-img {
+  width: min(240px, 55vw);
+  height: auto;
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.55), 0 0 40px rgba(255, 215, 0, 0.25);
+  transform-origin: center center;
+}
+
+.pack-img.enter {
+  animation: packEnter 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.pack-img.float {
+  animation: packFloat 2.5s ease-in-out infinite;
+}
+
+.pack-img.shake {
+  animation: packShake 0.55s ease-in-out 2;
+}
+
+.pack-img.burst-out {
+  animation: packBurstOut 0.6s ease-in forwards;
+}
+
+.pack-title {
+  font-size: clamp(1.25rem, 3vw, 1.75rem);
+  font-weight: 700;
+  margin-bottom: 8px;
+  text-shadow: 0 2px 12px rgba(255, 215, 0, 0.35);
+}
+
+.pack-subtitle {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.75);
+  margin-bottom: 20px;
+}
+
+.pack-action-btn {
+  background: linear-gradient(135deg, #ffd700, #ffb300);
+  color: #222;
+  border: none;
+  padding: 12px 32px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 8px 24px rgba(255, 215, 0, 0.35);
+}
+
+.pack-action-btn:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 12px 28px rgba(255, 215, 0, 0.45);
+}
+
+.pack-action-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Card flip grid */
+.card-reveal-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 22px;
+  justify-content: center;
+  align-items: flex-start;
+  margin-top: 8px;
+  min-height: 260px;
+}
+
+.card-reveal-grid.hidden {
+  display: none;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.card-reveal-grid.stagger-in .flip-card-wrap {
+  opacity: 0;
+  transform: translateY(30px) scale(0.85);
+  animation: cardDealIn 0.5s ease forwards;
+}
+
+/* Wrap có chiều cao cố định để info absolute không đẩy layout */
+.flip-card-wrap {
+  width: 180px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  position: relative;
+}
+
+.flip-card-wrap .flip-card {
+  position: relative;
+  z-index: 1;
+}
+
+.flip-card {
+  width: 100%;
+  perspective: 1100px;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: transform 0.25s ease;
+}
+
+.flip-card.flipped:hover {
+  transform: translateY(-6px) scale(1.03);
+}
+
+.flip-card.no-flip {
+  cursor: default;
+  pointer-events: none;
+}
+
+.flip-card-inner {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 5 / 7;
+  transition: transform 0.65s cubic-bezier(0.4, 0.2, 0.2, 1);
+  transform-style: preserve-3d;
+}
+
+.flip-card.flipped .flip-card-inner {
+  transform: rotateY(180deg);
+}
+
+.flip-card-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  border: 2px solid rgba(255, 255, 255, 0.15);
+}
+
+.flip-card-face img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.flip-card-back {
+  transform: rotateY(0deg);
+}
+
+.flip-card-front {
+  transform: rotateY(180deg);
+}
+
+.flip-card-info {
+  margin-top: 10px;
+  font-size: 12px;
+  line-height: 1.35;
+  height: 44px;
+  text-align: center;
+  opacity: 0;
+  transition: opacity 0.3s ease 0.35s;
+  overflow: hidden;
+}
+
+.flip-card-info.visible {
+  opacity: 1;
+}
+
+.flip-card-name {
+  font-weight: 700;
+  font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.flip-card-rarity {
+  font-size: 11px;
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+.flip-card-hint {
+  font-size: 10px;
+  color: rgba(255, 215, 0, 0.7);
+  margin-top: 2px;
+  font-style: italic;
+}
+
+.flip-hint {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.65);
+  margin: 12px 0 16px;
+}
+
+.flip-progress {
+  font-size: 12px;
+  color: rgba(255, 215, 0, 0.85);
+  margin-bottom: 12px;
+}
+
+@keyframes packEnter {
+  0% {
+    opacity: 0;
+    transform: scale(0.25) rotate(-8deg) translateY(40px);
+  }
+  70% {
+    transform: scale(1.06) rotate(2deg) translateY(-6px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg) translateY(0);
+  }
+}
+
+@keyframes packFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes packShake {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  20% {
+    transform: rotate(-4deg) scale(1.02);
+  }
+  40% {
+    transform: rotate(4deg) scale(1.02);
+  }
+  60% {
+    transform: rotate(-3deg);
+  }
+  80% {
+    transform: rotate(3deg);
+  }
+}
+
+@keyframes packBurstOut {
+  to {
+    opacity: 0;
+    transform: scale(1.4) translateY(-30px);
+    filter: blur(6px);
+  }
+}
+
+@keyframes glowPulse {
+  0%,
+  100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+}
+
+@keyframes cardDealIn {
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (max-width: 600px) {
+  .flip-card-wrap {
+    width: 130px;
+  }
+
+  .card-reveal-grid {
+    gap: 12px;
+    min-height: 200px;
+  }
+
+  .flip-card-name {
+    font-size: 12px;
+  }
+}
+
+/* ============================================================
+   Card detail modal — popup khi click vào lá đã lật
+   ============================================================ */
+.card-detail-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 2100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(8px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+  padding: 20px;
+}
+
+.card-detail-modal.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.card-detail-modal-inner {
+  background: linear-gradient(160deg, #1f1545 0%, #322273 100%);
+  border-radius: 18px;
+  width: min(820px, 100%);
+  max-height: 90vh;
+  overflow-y: auto;
+  color: #fff;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 24px;
+  padding: 24px;
+  position: relative;
+  transform: scale(0.92);
+  transition: transform 0.25s ease;
+}
+
+.card-detail-modal.active .card-detail-modal-inner {
+  transform: scale(1);
+}
+
+.card-detail-close {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: #fff;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+.card-detail-close:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.card-detail-img {
+  width: 100%;
+  border-radius: 12px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4), 0 0 20px var(--rarity-glow, transparent);
+  align-self: start;
+  border: 2px solid var(--rarity-color, rgba(255, 255, 255, 0.2));
+}
+
+.card-detail-body h3.card-detail-name {
+  font-size: 22px;
+  margin: 0 0 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.card-detail-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.card-chip {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.card-chip.rarity {
+  color: var(--rarity-color, #ffd700);
+  border-color: var(--rarity-color, #ffd700);
+}
+
+.card-chip.hp {
+  color: #ff6b6b;
+  border-color: rgba(255, 107, 107, 0.5);
+}
+
+.card-detail-section {
+  margin-top: 14px;
+}
+
+.card-detail-section h4 {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: rgba(255, 215, 0, 0.85);
+  margin: 0 0 8px;
+}
+
+.attack-item,
+.weakness-item {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+  border-left: 3px solid var(--rarity-color, #ffd700);
+}
+
+.attack-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.attack-name {
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.attack-damage {
+  font-weight: 800;
+  font-size: 14px;
+  color: #ffd700;
+}
+
+.attack-cost {
+  display: inline-flex;
+  gap: 4px;
+  margin-right: 8px;
+}
+
+.energy-pill {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.attack-effect {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.75);
+  line-height: 1.4;
+}
+
+.weakness-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* Type colors */
+.type-Fire { background: rgba(255, 87, 34, 0.25); color: #ff7043; }
+.type-Water { background: rgba(33, 150, 243, 0.25); color: #64b5f6; }
+.type-Grass { background: rgba(76, 175, 80, 0.25); color: #81c784; }
+.type-Lightning { background: rgba(255, 235, 59, 0.25); color: #fff176; }
+.type-Psychic { background: rgba(156, 39, 176, 0.25); color: #ba68c8; }
+.type-Fighting { background: rgba(121, 85, 72, 0.25); color: #a1887f; }
+.type-Darkness { background: rgba(33, 33, 33, 0.5); color: #bdbdbd; }
+.type-Metal { background: rgba(120, 144, 156, 0.25); color: #b0bec5; }
+.type-Fairy { background: rgba(233, 30, 99, 0.25); color: #f06292; }
+.type-Dragon { background: rgba(255, 152, 0, 0.25); color: #ffb74d; }
+.type-Colorless { background: rgba(189, 189, 189, 0.25); color: #e0e0e0; }
+
+@media (max-width: 600px) {
+  .card-detail-modal-inner {
+    grid-template-columns: 1fr;
+    padding: 18px;
+  }
+
+  .card-detail-img {
+    max-width: 240px;
+    margin: 0 auto;
+  }
+}
+
+/* ============================================================
+   Pack result panel — hiển thị trong tab Viewer sau khi mở pack
+   ============================================================ */
+.pack-result-panel {
+  background: linear-gradient(160deg, #1a1140 0%, #2b1f5e 100%);
+  border-radius: 16px;
+  padding: 20px;
+  color: #fff;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+}
+
+.pack-result-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.pack-result-title {
+  font-size: 18px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+}
+
+.pack-result-badge {
+  background: rgba(255, 215, 0, 0.15);
+  color: #ffd700;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.pack-result-back {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.pack-result-back:hover {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.pack-result-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 14px;
+}
+
+.pack-result-card {
+  position: relative;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  padding: 10px;
+  text-align: center;
+  border: 2px solid var(--rarity-color, #888);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3),
+    0 0 14px var(--rarity-glow, transparent);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  overflow: hidden;
+}
+
+.pack-result-card:hover {
+  transform: translateY(-4px) scale(1.04);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.4),
+    0 0 22px var(--rarity-glow, rgba(255, 215, 0, 0.45));
+}
+
+/* Sparkle for rare+ cards */
+.pack-result-card.shiny::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    115deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.25) 50%,
+    transparent 70%
+  );
+  background-size: 200% 200%;
+  animation: shimmer 3.5s linear infinite;
+  pointer-events: none;
+  mix-blend-mode: overlay;
+}
+
+/* Per-tier upgrade cho pack-result-card */
+.pack-result-card[data-tier='rare'] {
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35),
+    0 0 18px var(--rarity-glow, rgba(255, 215, 0, 0.4));
+}
+
+.pack-result-card[data-tier='epic'] {
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35),
+    0 0 22px var(--rarity-glow, rgba(255, 121, 198, 0.4)),
+    0 0 50px rgba(189, 147, 249, 0.25);
+  animation: epicBreath 3s ease-in-out infinite;
+}
+
+.pack-result-card[data-tier='legendary'] {
+  border-width: 3px;
+  border-color: #ffd700;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.45),
+    0 0 30px rgba(255, 215, 0, 0.55),
+    0 0 60px rgba(255, 121, 198, 0.35);
+  animation: legendaryBreath 2.5s ease-in-out infinite;
+}
+
+@keyframes epicBreath {
+  0%, 100% {
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35),
+      0 0 18px var(--rarity-glow, rgba(255, 121, 198, 0.4)),
+      0 0 45px rgba(189, 147, 249, 0.25);
+  }
+  50% {
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35),
+      0 0 28px var(--rarity-glow, rgba(255, 121, 198, 0.55)),
+      0 0 60px rgba(189, 147, 249, 0.4);
+  }
+}
+
+@keyframes legendaryBreath {
+  0%, 100% {
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.45),
+      0 0 28px rgba(255, 215, 0, 0.5),
+      0 0 55px rgba(255, 121, 198, 0.3);
+  }
+  50% {
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.45),
+      0 0 40px rgba(255, 215, 0, 0.75),
+      0 0 80px rgba(255, 121, 198, 0.5);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.pack-result-img-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 5 / 7;
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.pack-result-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.pack-result-name {
+  font-weight: 700;
+  font-size: 13px;
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pack-result-rarity {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: var(--rarity-color, #fff);
+}
+
+.pack-result-id {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.45);
+  margin-top: 2px;
+}
+
+.pack-result-footer {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.6);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pack-result-footer .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ffd700;
+  animation: glowPulse 1.4s ease-in-out infinite;
+}
+
+@media (max-width: 600px) {
+  .pack-result-grid {
+    grid-template-columns: repeat(auto-fit, minmax(95px, 1fr));
+    gap: 10px;
+  }
+
+  .pack-result-card {
+    padding: 8px;
+  }
+
+  .pack-result-name {
+    font-size: 12px;
+  }
+}
+
+/* ============================================================
+   RARITY REVEAL EFFECTS
+   Khi user click lật thẻ:
+     - rare       → halo vàng + burst + sparkle vàng + box-shadow pulse
+     - epic       → halo + holographic shimmer + glow tím-vàng + burst lớn
+     - legendary  → halo conic 7-màu xoay + shimmer mạnh + screen flash + sparkle nhiều
+   ============================================================ */
+
+/* Halo phía SAU card */
+.fx-halo {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  aspect-ratio: 5 / 7;
+  border-radius: 12px;
+  opacity: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.flip-card-wrap.revealed[data-tier='rare'] .fx-halo {
+  background: radial-gradient(circle, var(--rarity-color, #ffd700) 0%, transparent 70%);
+  filter: blur(12px);
+  animation: haloFadeIn 0.6s 0.25s ease-out forwards;
+}
+
+.flip-card-wrap.revealed[data-tier='epic'] .fx-halo {
+  background: radial-gradient(
+    circle,
+    var(--rarity-color, #ff79c6) 0%,
+    rgba(189, 147, 249, 0.7) 40%,
+    transparent 75%
+  );
+  filter: blur(14px);
+  animation: haloFadeIn 0.6s 0.25s ease-out forwards,
+    haloPulse 2.4s 0.85s ease-in-out infinite;
+}
+
+.flip-card-wrap.revealed[data-tier='legendary'] .fx-halo {
+  background: conic-gradient(
+    from 0deg,
+    #ff79c6,
+    #ffd700,
+    #50fa7b,
+    #8be9fd,
+    #bd93f9,
+    #ff5555,
+    #ff79c6
+  );
+  filter: blur(16px);
+  transform: scale(1.1);
+  animation: haloLegendaryIn 0.6s 0.25s ease-out forwards,
+    haloRotate 4.5s linear infinite 0.85s;
+}
+
+@keyframes haloFadeIn {
+  to {
+    opacity: 0.7;
+  }
+}
+
+@keyframes haloLegendaryIn {
+  to {
+    opacity: 0.85;
+  }
+}
+
+@keyframes haloRotate {
+  to {
+    transform: scale(1.1) rotate(360deg);
+  }
+}
+
+@keyframes haloPulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.95;
+  }
+}
+
+/* Overlay TRÊN card cho burst + sparkles */
+.fx-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  aspect-ratio: 5 / 7;
+  pointer-events: none;
+  z-index: 3;
+  overflow: visible;
+}
+
+/* Burst — quầng sáng nổ ra khi flip */
+.fx-burst {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  opacity: 0;
+  filter: blur(6px);
+}
+
+.flip-card-wrap.revealed[data-tier='rare'] .fx-burst {
+  background: radial-gradient(circle, #fff 0%, var(--rarity-color) 35%, transparent 65%);
+  animation: burstScale 1s 0.3s ease-out;
+}
+.flip-card-wrap.revealed[data-tier='epic'] .fx-burst {
+  background: radial-gradient(circle, #fff 0%, var(--rarity-color) 30%, transparent 65%);
+  animation: burstScale 1.2s 0.3s ease-out;
+}
+.flip-card-wrap.revealed[data-tier='legendary'] .fx-burst {
+  background: radial-gradient(
+    circle,
+    #fff 0%,
+    #ffd700 25%,
+    #ff79c6 50%,
+    transparent 70%
+  );
+  animation: burstScale 1.6s 0.3s ease-out;
+}
+
+@keyframes burstScale {
+  0% {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(2.4);
+    opacity: 0;
+  }
+}
+
+/* Sparkles — sao bay tỏa ra ngoài */
+.fx-sparkles {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+}
+
+.fx-spark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 14px;
+  height: 14px;
+  margin: -7px 0 0 -7px;
+  background: radial-gradient(
+    circle at 50% 50%,
+    #fff 0%,
+    var(--rarity-color, #fff) 45%,
+    transparent 75%
+  );
+  clip-path: polygon(
+    50% 0%,
+    58% 42%,
+    100% 50%,
+    58% 58%,
+    50% 100%,
+    42% 58%,
+    0% 50%,
+    42% 42%
+  );
+  opacity: 0;
+  filter: drop-shadow(0 0 5px var(--rarity-color));
+}
+
+.fx-spark-1  { --fx-x: -95px;  --fx-y: -85px;  --fx-d: 0.00s; }
+.fx-spark-2  { --fx-x:  95px;  --fx-y: -85px;  --fx-d: 0.06s; }
+.fx-spark-3  { --fx-x: 115px;  --fx-y:  15px;  --fx-d: 0.12s; }
+.fx-spark-4  { --fx-x:  75px;  --fx-y: 100px;  --fx-d: 0.18s; }
+.fx-spark-5  { --fx-x: -75px;  --fx-y: 100px;  --fx-d: 0.22s; }
+.fx-spark-6  { --fx-x:-115px;  --fx-y:  15px;  --fx-d: 0.10s; }
+.fx-spark-7  { --fx-x:   0px;  --fx-y:-125px;  --fx-d: 0.00s; }
+.fx-spark-8  { --fx-x:   0px;  --fx-y: 125px;  --fx-d: 0.24s; }
+.fx-spark-9  { --fx-x:  55px;  --fx-y: -55px;  --fx-d: 0.30s; }
+.fx-spark-10 { --fx-x: -55px;  --fx-y: -55px;  --fx-d: 0.32s; }
+.fx-spark-11 { --fx-x:  55px;  --fx-y:  55px;  --fx-d: 0.36s; }
+.fx-spark-12 { --fx-x: -55px;  --fx-y:  55px;  --fx-d: 0.38s; }
+
+.flip-card-wrap.revealed[data-tier='rare'] .fx-spark,
+.flip-card-wrap.revealed[data-tier='epic'] .fx-spark,
+.flip-card-wrap.revealed[data-tier='legendary'] .fx-spark {
+  animation: sparkFly 1.4s cubic-bezier(0.22, 0.7, 0.3, 1) forwards;
+  animation-delay: calc(0.35s + var(--fx-d, 0s));
+}
+
+@keyframes sparkFly {
+  0% {
+    transform: translate(0, 0) scale(0) rotate(0deg);
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+    transform: translate(
+        calc(var(--fx-x) * 0.3),
+        calc(var(--fx-y) * 0.3)
+      )
+      scale(1.4) rotate(60deg);
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--fx-x), var(--fx-y)) scale(0.4) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+/* ----- Hiệu ứng liên tục trên FRONT của thẻ sau khi đã lật ----- */
+
+/* RARE — viền vàng pulse */
+.flip-card-wrap.revealed[data-tier='rare'] .flip-card-front {
+  border-color: var(--rarity-color) !important;
+  box-shadow: 0 0 0 2px var(--rarity-color),
+    0 0 22px var(--rarity-color),
+    0 8px 24px rgba(0, 0, 0, 0.45);
+  animation: cardPulseRare 2.4s ease-in-out infinite 0.4s;
+}
+
+@keyframes cardPulseRare {
+  0%, 100% {
+    box-shadow: 0 0 0 2px var(--rarity-color),
+      0 0 18px var(--rarity-color),
+      0 8px 24px rgba(0, 0, 0, 0.45);
+  }
+  50% {
+    box-shadow: 0 0 0 2px var(--rarity-color),
+      0 0 34px var(--rarity-color),
+      0 8px 24px rgba(0, 0, 0, 0.45);
+  }
+}
+
+/* EPIC — viền + holographic shimmer chạy ngang */
+.flip-card-wrap.revealed[data-tier='epic'] .flip-card-front {
+  border-color: var(--rarity-color) !important;
+  box-shadow: 0 0 0 2px var(--rarity-color),
+    0 0 30px var(--rarity-color),
+    0 0 55px rgba(189, 147, 249, 0.45),
+    0 8px 24px rgba(0, 0, 0, 0.45);
+}
+
+.flip-card-wrap.revealed[data-tier='epic'] .flip-card-front::after,
+.flip-card-wrap.revealed[data-tier='legendary'] .flip-card-front::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    115deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.55) 50%,
+    transparent 70%
+  );
+  background-size: 250% 250%;
+  animation: holoShine 2.6s linear infinite 0.5s;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  z-index: 1;
+}
+
+/* LEGENDARY — shimmer rainbow + brightness pulse */
+.flip-card-wrap.revealed[data-tier='legendary'] .flip-card-front {
+  border-color: #ffd700 !important;
+  box-shadow: 0 0 0 2px #ffd700,
+    0 0 40px var(--rarity-color),
+    0 0 80px rgba(255, 215, 0, 0.5),
+    0 8px 30px rgba(0, 0, 0, 0.55);
+  animation: cardPulseLegendary 2.6s ease-in-out infinite 0.4s;
+}
+
+.flip-card-wrap.revealed[data-tier='legendary'] .flip-card-front::after {
+  background: linear-gradient(
+    115deg,
+    transparent 15%,
+    rgba(255, 215, 0, 0.55) 35%,
+    rgba(255, 121, 198, 0.45) 55%,
+    rgba(139, 233, 253, 0.4) 70%,
+    transparent 85%
+  );
+  background-size: 220% 220%;
+  animation: holoShine 1.9s linear infinite 0.4s;
+}
+
+@keyframes holoShine {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@keyframes cardPulseLegendary {
+  0%, 100% {
+    filter: brightness(1) saturate(1.05);
+  }
+  50% {
+    filter: brightness(1.15) saturate(1.35);
+  }
+}
+
+/* ----- Screen flash full-page khi reveal legendary ----- */
+.rarity-flash-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2050;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at center,
+    var(--flash-color, #ffd700) 0%,
+    transparent 65%
+  );
+  opacity: 0;
+  mix-blend-mode: screen;
+}
+
+.rarity-flash-overlay.active {
+  animation: legendaryFlash 1s ease-out;
+}
+
+@keyframes legendaryFlash {
+  0% {
+    opacity: 0;
+    transform: scale(1);
+  }
+  18% {
+    opacity: 0.85;
+    transform: scale(1.08);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.25);
+  }
+}
+
+/* Tôn trọng người dùng giảm hiệu ứng */
+@media (prefers-reduced-motion: reduce) {
+  .flip-card-wrap.revealed .fx-burst,
+  .flip-card-wrap.revealed .fx-spark,
+  .flip-card-wrap.revealed .fx-halo,
+  .flip-card-wrap.revealed .flip-card-front,
+  .flip-card-wrap.revealed .flip-card-front::after,
+  .rarity-flash-overlay.active {
+    animation: none !important;
+  }
+}
