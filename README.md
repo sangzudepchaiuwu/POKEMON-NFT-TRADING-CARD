@@ -2,8 +2,8 @@
 
 <div align="center">
 <p align="center">
-  <img src="static/logoDaiNam.png" alt="DaiNam University Logo" width="200"/>
-  <img src="static/LogoAIoTLab.png" alt="AIoTLab Logo" width="170"/>
+  <img src="Static/logoDaiNam.png" alt="DaiNam University Logo" width="200"/>
+  <img src="Static/LogoAIoTLab.png" alt="AIoTLab Logo" width="170"/>
 </p>
 
 [![Avalanche Fuji](https://img.shields.io/badge/Network-Avalanche%20Fuji-red?style=for-the-badge)](https://testnet.snowtrace.io/)
