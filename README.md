@@ -526,6 +526,7 @@ MIT License - xem file [LICENSE](LICENSE) để chi tiết.
 <div align="center">
 
 **⭐ Nếu dự án hữu ích, hãy cho một ⭐ star!**
-
-
 </div>
+
+<img src="Screenshot 2026-06-04 141736.png" width="250"/>
+<img src="Screenshot 2026-06-04 141747.png" width="250"/>
